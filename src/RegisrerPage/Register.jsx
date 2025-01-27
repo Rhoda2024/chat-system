@@ -21,7 +21,7 @@ const Register = () => {
         file: e.target.files[0],
         url: URL.createObjectURL(e.target.files[0]),
       });
-    } 
+    }
   };
 
   const uploadToCloudinary = async (file) => {

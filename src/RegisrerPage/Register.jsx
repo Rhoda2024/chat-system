@@ -5,7 +5,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
 import { doc, getDocs, setDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
-import chat from "../assets/chatimg.svg";
 
 const Register = () => {
   const [avatar, setAvatar] = useState({
@@ -89,7 +88,7 @@ const Register = () => {
   return (
     <div className="flex items-center gap-[10rem]">
       <div className="w-[700px]">
-        <img src={chat} alt="" />
+        <img src={"/chatimg.svg"} alt="" />
       </div>
 
       <div className="flex flex-col gap-[20px] items-center">

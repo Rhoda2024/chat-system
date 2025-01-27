@@ -4,7 +4,6 @@ import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../lib/userStore";
-import chat from "../assets/chatimg.svg";
 
 const Login = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
@@ -73,7 +72,7 @@ const Login = () => {
   return (
     <div className="flex gap-[10rem]">
       <div className="w-[700px]">
-        <img src={chat} alt="" />
+        <img src={"/chatimg.svg"} alt="" />
       </div>
 
       <div className="flex flex-col gap-[20px] items-center justify-center">

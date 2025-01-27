@@ -4,7 +4,7 @@ import { onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { Link, useNavigate } from "react-router-dom";
 import { useUserStore } from "../lib/userStore";
-import chat from "/src/assets/chatimg.svg";
+import chat from "../assets/chatimg.svg";
 
 const Login = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();

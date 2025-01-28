@@ -86,12 +86,12 @@ const Register = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-[3rem] xl:gap-[8rem] items-center w-full lg:px-[2rem]">
+    <div className="flex flex-col lg:flex-row gap-[2rem] xl:gap-[8rem] items-center w-full lg:px-[2rem]">
       <div className="max-w-[200px] sm:max-w-[350px] lg:max-w-[650px]">
         <img src={"/chatimg.svg"} alt="" />
       </div>
 
-      <div className="flex flex-col gap-[20px] items-center">
+      <div className="flex flex-col gap-[10px] items-center">
         <h2 className=" font-medium text-white text-[35px] sm:text-[50px]">
           Create an Account
         </h2>
@@ -100,9 +100,9 @@ const Register = () => {
             <img
               src={avatar.url || img}
               alt=""
-              className=" rounded-[1rem] w-[90px]"
+              className=" rounded-[1rem] w-[60px] sm:w-[90px]"
             />
-            <p className="text-[24px] cursor-pointer hover:text-blue-200 ">
+            <p className="text-[18px] sm:text-[24px] cursor-pointer hover:text-blue-200 ">
               Upload an image
             </p>
           </label>

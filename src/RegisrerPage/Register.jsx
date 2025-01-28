@@ -86,13 +86,13 @@ const Register = () => {
   };
 
   return (
-    <div className="flex items-center gap-[10rem]">
-      <div className="w-[700px]">
+    <div className="flex flex-col lg:flex-row gap-[3rem] xl:gap-[8rem] items-center w-full lg:px-[2rem]">
+      <div className="max-w-[200px] sm:max-w-[350px] lg:max-w-[650px]">
         <img src={"/chatimg.svg"} alt="" />
       </div>
 
       <div className="flex flex-col gap-[20px] items-center">
-        <h2 className=" font-medium text-white text-[50px]">
+        <h2 className=" font-medium text-white text-[35px] sm:text-[50px]">
           Create an Account
         </h2>
         <form onSubmit={handleRegister} className="flex flex-col gap-[20px]">
@@ -116,19 +116,19 @@ const Register = () => {
             type="text"
             placeholder="Username..."
             name="username"
-            className="w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className=" max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
           <input
             type="email"
             placeholder="Email..."
             name="email"
-            className="w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className="max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
           <input
             type="password"
             placeholder="Password..."
             name="password"
-            className="w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className="max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
 
           <button
@@ -138,7 +138,7 @@ const Register = () => {
             {loading ? "Loading..." : "Sign Up"}
           </button>
         </form>
-        <p className="text-blue-950 text-[20px]">
+        <p className="text-blue-950 text-[18px] sm:text-[24px]">
           Already have an account? Login{" "}
           <Link to="/login" className="underline hover:text-blue-200 ">
             here

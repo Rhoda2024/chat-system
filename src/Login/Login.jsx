@@ -70,26 +70,28 @@ const Login = () => {
   };
 
   return (
-    <div className="flex gap-[10rem]">
-      <div className="w-[700px]">
+    <div className="flex flex-col gap-[3rem] xl:gap-[8rem] lg:flex-row items-center w-full lg:px-[2rem] ">
+      <div className=" max-w-[200px] sm:max-w-[350px] lg:max-w-[650px]">
         <img src={"/chatimg.svg"} alt="" />
       </div>
 
       <div className="flex flex-col gap-[20px] items-center justify-center">
-        <h2 className="font-medium text-white text-[50px]">Welcome back</h2>
+        <h2 className="font-medium text-white text-[40px] sm:text-[50px]">
+          Welcome back
+        </h2>
         <form onSubmit={handleLogin} className="flex flex-col gap-[20px]">
           <input
             type="email"
             placeholder="Email..."
             name="email"
-            className=" w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className=" max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
 
           <input
             type="password"
             placeholder="Password..."
             name="password"
-            className=" outline-none w-[500px] p-[20px] text-[20px] rounded-[1rem] text-black"
+            className=" outline-none max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] text-black"
           />
 
           <button
@@ -99,7 +101,7 @@ const Login = () => {
             {loading ? "Loading..." : "Sign In"}
           </button>
         </form>
-        <p className="text-blue-950 text-[20px] ">
+        <p className="text-blue-950 text-[18px] sm:text-[24px] ">
           Don't have an account ? Register{" "}
           <Link to="/register" className="underline hover:text-blue-200">
             here

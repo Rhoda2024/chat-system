@@ -5,6 +5,7 @@ export default {
     extend: {
       backgroundImage: {
         heroimg: "url('../src/assets/bg.jpg')",
+        chatimg: "url('../src/assets/imgg.jpg')",
       },
     },
   },

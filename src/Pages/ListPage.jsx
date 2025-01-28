@@ -1,12 +1,12 @@
-import React from 'react'
-import Lists from '../List/Lists'
+import React from "react";
+import Lists from "../List/Lists";
 
 const ListPage = () => {
   return (
-    <div>
-        <Lists/>
+    <div className="border-r  border-r-[#7879f1] ">
+      <Lists />
     </div>
-  )
-}
+  );
+};
 
-export default ListPage
+export default ListPage;

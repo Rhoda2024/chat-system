@@ -140,6 +140,7 @@ const Register = () => {
         </form>
         <p className="text-blue-950 text-[18px] sm:text-[24px]">
           Already have an account? Login{" "}
+          
           <Link to="/login" className="underline hover:text-blue-200 ">
             here
           </Link>

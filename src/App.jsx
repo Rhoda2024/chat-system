@@ -6,7 +6,7 @@ import Login from "./Login/Login";
 import { useUserStore } from "./lib/userStore";
 
 function App() {
-  const { currentUser, isLoading, fetchUserInfo } = useUserStore();
+  const { currentUser } = useUserStore();
   console.log(currentUser);
 
   return (

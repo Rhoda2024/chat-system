@@ -48,11 +48,6 @@ const Detailss = () => {
       );
 
       changeBlock();
-      toast.success(
-        isReceiverBlocked
-          ? "User unblocked successfully."
-          : "User blocked successfully."
-      );
     } catch (error) {
       console.error("Error updating block status:", error);
       toast.error("An error occurred. Please try again.");
@@ -99,7 +94,7 @@ const Detailss = () => {
 
   return (
     <div className="detail">
-      <div className="py-[30px] px-[10px] flex flex-col items-center gap-[10px] border-b-[#7879f1] border-b">
+      <div className="py-[30px] px-[10px] flex flex-col items-center gap-[10px] border-b-[white] border-b">
         <img
           src={user?.avatar || img}
           alt=""
@@ -146,7 +141,7 @@ const Detailss = () => {
             {isCurrentUserBlocked
               ? "You are Blocked"
               : isReceiverBlocked
-              ? "User blocked"
+              ? "Unblock"
               : "Block User"}
           </button>
         )}

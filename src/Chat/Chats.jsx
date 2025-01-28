@@ -137,7 +137,7 @@ const Chats = () => {
   console.log(text);
 
   return (
-    <div className=" border border-r-[#7879f1] h-full flex flex-col ">
+    <div className=" h-full flex flex-col ">
       <div className=" p-[20px] flex items-center justify-between border-b border-b-[#7879f1] ">
         <div className="flex items-center gap-[20px]">
           <img
@@ -178,7 +178,7 @@ const Chats = () => {
         </div>
       </div>
 
-      <div className="p-[20px] flex flex-col gap-[20px] scrollbar-none overflow-y-scroll ">
+      <div className="p-[20px] flex flex-col gap-[20px] scrollbar-none overflow-y-scroll bg-chatimg ">
         <div className="w-full">
           {chat?.messages.map((message, index) => (
             <div

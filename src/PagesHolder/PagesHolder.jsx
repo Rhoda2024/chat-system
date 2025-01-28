@@ -33,7 +33,7 @@ const PagesHolder = () => {
     );
 
   return (
-    <div className=" grid grid-cols-[25%_75%] grid-rows-[100%] bg-white text-black w-[85vw] h-[90vh] rounded-[12px] border-[#7879f1] border">
+    <div className=" flex bg-white text-black max-w-[85vw] h-[90vh] rounded-[12px] border-[#7879f1] border">
       <>
         <ListPage />
         {chatId && <ChatPage />}

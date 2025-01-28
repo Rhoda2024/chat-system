@@ -8,7 +8,7 @@ import { useChatStore } from "../lib/chatStore";
 import { GoSearch } from "react-icons/go";
 // import { FaTimes } from "react-icons/fa";
 import { TiTimes } from "react-icons/ti";
-import { AiOutlinePlus } from "react-icons/ai";
+import { IoCheckmarkDoneOutline, IoCheckmarkOutline } from "react-icons/io5";
 
 const ChatList = () => {
   const [chats, setChats] = useState([]);
@@ -75,8 +75,8 @@ const ChatList = () => {
 
   return (
     <div className=" max-h-[800px] scrollbar-none overflow-y-scroll border-l border-l-[#7879f1]">
-      <div className="flex items-center gap-[20px] p-[20px] ">
-        <div className=" border-[#7879f1] border-2 flex items-center gap-[20px] rounded-[10px] p-[10px] ">
+      <div className="flex items-center gap-[10px] p-[20px] ">
+        <div className=" border-[#7879f1] border-2 flex items-center gap-[10px] rounded-[10px] p-[10px] ">
           <GoSearch color="#7879f1" className="w-[20px] h-[20px]" />
           <input
             type="text"
@@ -88,21 +88,21 @@ const ChatList = () => {
 
         <div className="relative inline-block">
           <div
-            className="w-[36px] h-[36px] bg-[#7879f1] cursor-pointer rounded-[10px] p-[5px] flex items-center justify-center"
+            className="w-fit h-fit bg-[#7879f1] cursor-pointer p-[10px] rounded-[10px] flex items-center justify-center"
             onClick={() => setAddMode((prev) => !prev)}
-            onMouseEnter={() => setTooltip(addMode ? "Close" : "Add User")}
+            onMouseEnter={() => setTooltip(addMode ? "Close" : "")}
             onMouseLeave={() => setTooltip("")}
           >
             {addMode ? (
               <TiTimes className="text-white w-[25px] h-[25px]" />
             ) : (
-              <AiOutlinePlus className="text-white w-[20px] h-[20px]" />
+              <p className="text-white ">Add User</p>
             )}
           </div>
 
           {/* Tooltip */}
           {tooltip && (
-            <div className="absolute top-[-26px] left-[95%]  text-white rounded-[10px] bg-[#7879f1] p-[5px] text-[10px]">
+            <div className="absolute top-[-26px] left-[70%] text-white rounded-[10px] bg-[#7879f1] p-[5px] text-[10px]">
               {tooltip}
             </div>
           )}
@@ -115,9 +115,6 @@ const ChatList = () => {
             className=" flex items-center gap-[20px] p-[20px] cursor-pointer  border-b-[#7879f1] border-b-[1px]"
             key={chat.chatId}
             onClick={() => handleSelect(chat)}
-            style={{
-              backgroundColor: chat?.isSeen ? "transparent" : "#7879f9",
-            }}
           >
             <img
               src={
@@ -126,15 +123,28 @@ const ChatList = () => {
                   : chat.user.avatar || avatar
               }
               alt=""
-              className=" w-[60px] h-[60px] rounded-[50%] object-cover"
+              className=" w-[70px] h-[70px] rounded-[50%] object-cover"
             />
-            <div className="flex flex-col gap-[10px] ">
+            <div className="flex flex-col gap-[10px] w-full ">
               <span className="font-medium ">
                 {chat.user.blocked.includes(currentUser.id)
                   ? "User"
                   : chat.user.username}
               </span>
-              <p className=" text-[14px] font-light "> {chat.lastMessage}</p>
+              <p className=" text-[14px] font-light  flex justify-between items-center ">
+                {" "}
+                {chat.lastMessage}
+                <span>
+                  {chat?.isSeen ? (
+                    <IoCheckmarkDoneOutline
+                      size={20}
+                      className=" text-[#7879f1] "
+                    /> // Seen icon
+                  ) : (
+                    <IoCheckmarkOutline size={20} /> // Unseen icon
+                  )}
+                </span>
+              </p>
             </div>
           </div>
         ))}

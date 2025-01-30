@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import ChatPage from "../Pages/ChatPage";
-import DetailPage from "../Pages/DetailPage";
 import ListPage from "../Pages/ListPage";
-import Notification from "../Notification/Notification";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useUserStore } from "../lib/userStore";
 import { useChatStore } from "../lib/chatStore";
+import ChatWindow from "../List/ChatWindow";
+import Chats from "../Chat/Chats";
 
 const PagesHolder = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
-  const [isRegistering, setIsRegistering] = useState(false);
   const { chatId } = useChatStore();
 
   useEffect(() => {
@@ -33,13 +31,11 @@ const PagesHolder = () => {
     );
 
   return (
-    <div className=" flex bg-white text-black max-w-[85vw] h-[90vh] rounded-[12px] border-[#7879f1] border">
-      <>
-        <ListPage />
-        {chatId && <ChatPage />}
-        {/* {chatId && <DetailPage />} */}
-      </>
-      <Notification />
+    <div className="flex bg-white text-black max-w-fit h-[90vh] rounded-[12px] border border-[#7879f1]">
+      <ListPage />
+      <div className="flex-grow w-[50vw]">
+        {chatId ? <Chats /> : <ChatWindow />}
+      </div>
     </div>
   );
 };

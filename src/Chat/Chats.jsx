@@ -12,9 +12,8 @@ import avatar from "../assets/avatar.png";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
 import Detailss from "../Detail/Detailss";
-import { FaCamera, FaCircleInfo, FaPhone, FaVideo } from "react-icons/fa6";
+import { FaCamera, FaCircleInfo } from "react-icons/fa6";
 import { BsEmojiWink } from "react-icons/bs";
-import { MdKeyboardVoice } from "react-icons/md";
 import { format } from "timeago.js";
 import axios from "axios";
 
@@ -28,17 +27,32 @@ const Chats = () => {
   });
   const [view, setView] = useState(false);
   const [tooltip, setTooltip] = useState("");
-
-  const toggleView = () => {
-    setView(!view);
-  };
-
+  const detailsRef = useRef(null);
   const { currentUser } = useUserStore();
   const { chatId, user, isCurrentUserBlocked, isReceiverBlocked } =
     useChatStore();
 
+  const toggleView = () => {
+    setView((prev) => !prev);
+  };
+
+  // Close detailed view when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (detailsRef.current && !detailsRef.current.contains(event.target)) {
+        setView(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const endRef = useRef(null);
 
+  // scroll into view
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [chat?.messages]);
@@ -70,17 +84,17 @@ const Chats = () => {
   };
 
   const handleSend = async () => {
-    if (text === "" && !img.file) return; // Prevent sending empty messages
+    if (text.trim() === "" && !img.file) return; // Prevent sending empty messages
 
     let imgUrl = null;
 
     try {
-      // Step 1: Upload image to Cloudinary if it exists
+      //  Upload image to Cloudinary if it exists
       if (img.file) {
         const formData = new FormData();
         formData.append("file", img.file);
-        formData.append("upload_preset", "chatapp"); // Replace with your Cloudinary preset
-        formData.append("cloud_name", "ds3vaxiod"); // Replace with your Cloudinary cloud name
+        formData.append("upload_preset", "chatapp");
+        formData.append("cloud_name", "ds3vaxiod");
 
         const response = await axios.post(
           "https://api.cloudinary.com/v1_1/ds3vaxiod/image/upload",
@@ -90,6 +104,7 @@ const Chats = () => {
         imgUrl = response.data.secure_url; // Get the image URL from Cloudinary response
       }
 
+      // Send message to Firestore
       await updateDoc(doc(db, "chats", chatId), {
         messages: arrayUnion({
           senderId: currentUser.id,
@@ -99,6 +114,7 @@ const Chats = () => {
         }),
       });
 
+      //  Update user chats
       const userIDs = [currentUser.id, user.id];
 
       userIDs.forEach(async (id) => {
@@ -122,22 +138,17 @@ const Chats = () => {
           });
         }
       });
+
+      // Reset input field and image
+      setText(""); // Clear text input
+      setImg({ file: null, url: "" }); // Clear image
     } catch (error) {
       console.error("Error sending message:", error);
     }
-
-    // Reset the input fields
-    setText("");
-    setImg({
-      file: null,
-      url: "",
-    });
   };
 
-  console.log(text);
-
   return (
-    <div className=" h-full flex flex-col ">
+    <div className=" h-full max-w-fit flex flex-col ">
       <div className=" p-[20px] flex items-center justify-between border-b border-b-[#7879f1] ">
         <div className="flex items-center gap-[20px]">
           <img
@@ -151,26 +162,27 @@ const Chats = () => {
         </div>
 
         <div className="flex gap-[20px]">
-          <FaPhone size={20} color="#7879f1" />
-          <FaVideo size={20} color="#7879f1" />
-
-          <div className=" relative inline-block">
+          <div className="relative inline-block">
             <FaCircleInfo
-              size={20}
+              size={30}
               color="#7879f1"
               onClick={toggleView}
               onMouseEnter={() => setTooltip("info")}
               onMouseLeave={() => setTooltip("")}
+              className="cursor-pointer"
             />
+
             {view && (
-              <div className="absolute bg-[#333333] text-white h-[79.7vh] z-10 w-[23.5vw] top-[3.7rem] right-[-1.3rem] rounded-[10px]">
+              <div
+                ref={detailsRef}
+                className="absolute bg-white text-black shadow-2xl h-[50vh] z-10 w-[20vw] top-[3.7rem]  right-[-1.3rem] rounded-[10px]"
+              >
                 <Detailss />
               </div>
             )}
 
-            {/* Tooltip */}
             {tooltip && (
-              <div className="absolute top-[-30px] left-1/2 transform -translate-x-1/2 bg-[#7879f1] text-bg-black text-white text-sm rounded-md px-2 py-1 z-10">
+              <div className="absolute top-[-30px] left-[10%] bg-[#7879f1] text-white text-sm rounded-md px-2 py-1 z-10">
                 {tooltip}
               </div>
             )}
@@ -178,12 +190,12 @@ const Chats = () => {
         </div>
       </div>
 
-      <div className="p-[20px] flex flex-col gap-[20px] scrollbar-none overflow-y-scroll bg-chatimg ">
+      <div className="p-[20px] flex flex-col gap-[20px] scrollbar-none overflow-y-scroll bg-chatimg h-full ">
         <div className="w-full">
           {chat?.messages.map((message, index) => (
             <div
               key={index}
-              className={`flex w-full ${
+              className={`flex w-full pb-[0.5rem] ${
                 message.senderId === currentUser?.id
                   ? "justify-end"
                   : "justify-start"
@@ -194,21 +206,29 @@ const Chats = () => {
                   <img
                     src={message.img}
                     alt="Message"
-                    className="w-[400px] h-[400px] object-cover rounded-[10px]"
+                    className="w-[300px] h-[300px] overflow-hidden object-cover rounded-[10px]"
                   />
                 )}
                 {message.text && (
                   <p
-                    className={`p-[20px] text-white rounded-[10px] ${
+                    className={`w-fit px-[15px] py-[10px]  text-white rounded-[10px] ${
                       message.senderId === currentUser?.id
-                        ? "bg-[#7879f1]"
-                        : "bg-[#16167a]"
+                        ? "bg-[#7879f1] rounded-r-3xl "
+                        : "bg-[#16167a] rounded-l-3xl "
                     }`}
                   >
                     {message.text}
                   </p>
                 )}
-                <span>{format(message.createdAt.toDate())}</span>
+                <span
+                  className={`flex text-[12px] text-gray-500 ${
+                    message.senderId === currentUser?.id
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
+                  {format(message.createdAt.toDate())}
+                </span>
               </div>
             </div>
           ))}
@@ -216,7 +236,7 @@ const Chats = () => {
 
         {img.url && (
           <div className="">
-            <div className="">
+            <div className=" w-[400px] h-[400px] ">
               <img src={img.url} alt="" />
             </div>
           </div>
@@ -235,9 +255,19 @@ const Chats = () => {
               accept="image/*"
               style={{ display: "none" }}
               onChange={handleImg}
+              className="w-[50px] h-[50px]"
             />
           </label>
-          <MdKeyboardVoice size={25} color="#7879f1" />
+          <div className="relative ">
+            <BsEmojiWink
+              className="w-[25px] h-[25px] cursor-pointer text-[#7879f1]"
+              alt=""
+              onClick={() => setOpen((prev) => !prev)}
+            />
+            <div className=" absolute shadow-lg bottom-[50px] left-[0] ">
+              <EmojiPicker open={open} onEmojiClick={handleEmoji} />
+            </div>
+          </div>
         </div>
 
         <input
@@ -252,16 +282,7 @@ const Chats = () => {
           onChange={(e) => setText(e.target.value)}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         />
-        <div className="relative ">
-          <BsEmojiWink
-            className="w-[25px] h-[25px] cursor-pointer text-[#7879f1]"
-            alt=""
-            onClick={() => setOpen((prev) => !prev)}
-          />
-          <div className=" absolute bottom-[50px] left-[0] ">
-            <EmojiPicker open={open} onEmojiClick={handleEmoji} />
-          </div>
-        </div>
+
         <button
           className=" bg-[#7879f1] hover:bg-[#3e3edd]  text-white px-[30px] py-[10px] border-[none] rounded-[5px] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
           onClick={handleSend}

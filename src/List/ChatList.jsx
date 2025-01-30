@@ -2,46 +2,69 @@ import React, { useEffect, useState } from "react";
 import avatar from "../assets/avatar.png";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../lib/userStore";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+  arrayRemove,
+} from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { GoSearch } from "react-icons/go";
-// import { FaTimes } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { TiTimes } from "react-icons/ti";
-import { IoCheckmarkDoneOutline, IoCheckmarkOutline } from "react-icons/io5";
+import {
+  IoCheckmarkDoneOutline,
+  IoCheckmarkOutline,
+  IoTrashBinOutline,
+} from "react-icons/io5";
+import { CiSearch } from "react-icons/ci";
+import { format } from "timeago.js";
+import { writeBatch } from "firebase/firestore"; // Import writeBatch
 
 const ChatList = () => {
   const [chats, setChats] = useState([]);
   const [addMode, setAddMode] = useState(false);
   const [input, setInput] = useState("");
   const [tooltip, setTooltip] = useState("");
-
+  const batch = writeBatch(db);
   const { currentUser } = useUserStore();
   const { chatId, changeChat } = useChatStore();
 
   useEffect(() => {
-    const unSub = onSnapshot(
-      doc(db, "userchats", currentUser.id),
-      async (res) => {
-        const items = res.data().chats;
+    if (!currentUser?.id) return;
 
-        const promises = items.map(async (item) => {
-          const userDocRef = doc(db, "users", item.receiverId);
-          const userDocSnap = await getDoc(userDocRef);
+    const userChatsRef = doc(db, "userchats", currentUser.id);
 
-          const user = userDocSnap.data();
-
-          return { ...item, user };
-        });
-
-        const chatData = await Promise.all(promises);
-        setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+    const unSub = onSnapshot(userChatsRef, async (res) => {
+      if (!res.exists()) {
+        setChats([]);
+        return;
       }
-    );
 
-    return () => {
-      unSub();
-    };
+      const items = res.data().chats;
+
+      if (!items.length) {
+        setChats([]);
+        return;
+      }
+
+      // Fetch all user details in a single batch
+      const userIds = items.map((item) => item.receiverId);
+      const userDocs = await Promise.all(
+        userIds.map((id) => getDoc(doc(db, "users", id)))
+      );
+
+      const chatData = items.map((item, index) => ({
+        ...item,
+        user: userDocs[index].exists() ? userDocs[index].data() : {},
+      }));
+
+      setChats(chatData.sort((a, b) => b.updatedAt - a.updatedAt));
+    });
+
+    return () => unSub();
   }, [currentUser.id]);
 
   const handleSelect = async (chat) => {
@@ -65,23 +88,67 @@ const ChatList = () => {
 
       changeChat(chat.chatId, chat.user);
     } catch (error) {
-      console.log(error);
+      console.log("Error updating chat:", error);
     }
   };
 
-  const filteredChats = chats.filter((c) =>
-    c.user.username.toLowerCase().includes(input.toLowerCase())
+  const handleDelete = async (chatIdToDelete, receiverId) => {
+    try {
+      const currentUserChatsRef = doc(db, "userchats", currentUser.id);
+      const receiverChatsRef = doc(db, "userchats", receiverId);
+
+      const currentUserDoc = await getDoc(currentUserChatsRef);
+      const receiverUserDoc = await getDoc(receiverChatsRef);
+
+      if (!currentUserDoc.exists() || !receiverUserDoc.exists()) {
+        console.log("One of the users does not exist in Firestore.");
+        return;
+      }
+
+      const currentUserChats = currentUserDoc.data().chats || [];
+      const receiverUserChats = receiverUserDoc.data().chats || [];
+
+      // Remove the chat manually instead of using `arrayRemove`
+      const updatedCurrentUserChats = currentUserChats.filter(
+        (chat) => chat.chatId !== chatIdToDelete
+      );
+      const updatedReceiverUserChats = receiverUserChats.filter(
+        (chat) => chat.chatId !== chatIdToDelete
+      );
+
+      // Perform batch write
+      const batch = writeBatch(db);
+
+      batch.update(currentUserChatsRef, { chats: updatedCurrentUserChats });
+      batch.update(receiverChatsRef, { chats: updatedReceiverUserChats });
+
+      await batch.commit();
+
+      // Update local state
+      setChats(updatedCurrentUserChats);
+
+      console.log("Chat deleted successfully for both users.");
+    } catch (error) {
+      console.error("Error deleting chat:", error);
+    }
+  };
+
+  // Fixed search filter (prevents "Cannot read properties of undefined")
+  const filteredChats = chats.filter(
+    (c) => c.user?.username?.toLowerCase().includes(input.toLowerCase()) // Optional chaining
   );
 
   return (
     <div className=" max-h-[800px] scrollbar-none overflow-y-scroll border-l border-l-[#7879f1]">
+      <p className="text-[24px] pl-[1rem]">Chats</p>
+
       <div className="flex items-center gap-[10px] p-[20px] ">
         <div className=" border-[#7879f1] border-2 flex items-center gap-[10px] rounded-[10px] p-[10px] ">
           <GoSearch color="#7879f1" className="w-[20px] h-[20px]" />
           <input
             type="text"
             className=" border-none outline-none bg-transparent "
-            placeholder="Search"
+            placeholder="Search or start a new chat..."
             onChange={(e) => setInput(e.target.value)}
           />
         </div>
@@ -90,13 +157,13 @@ const ChatList = () => {
           <div
             className="w-fit h-fit bg-[#7879f1] cursor-pointer p-[10px] rounded-[10px] flex items-center justify-center"
             onClick={() => setAddMode((prev) => !prev)}
-            onMouseEnter={() => setTooltip(addMode ? "Close" : "")}
+            onMouseEnter={() => setTooltip(addMode ? "Close" : "Add User")}
             onMouseLeave={() => setTooltip("")}
           >
             {addMode ? (
-              <TiTimes className="text-white w-[25px] h-[25px]" />
+              <TiTimes size={20} className="text-white" />
             ) : (
-              <p className="text-white ">Add User</p>
+              <CiSearch size={20} className="text-white" />
             )}
           </div>
 
@@ -123,7 +190,7 @@ const ChatList = () => {
                   : chat.user.avatar || avatar
               }
               alt=""
-              className=" w-[70px] h-[70px] rounded-[50%] object-cover"
+              className=" w-[90px] h-[70px] rounded-[50%] object-cover"
             />
             <div className="flex flex-col gap-[10px] w-full ">
               <span className="font-medium ">
@@ -131,9 +198,11 @@ const ChatList = () => {
                   ? "User"
                   : chat.user.username}
               </span>
+
               <p className=" text-[14px] font-light  flex justify-between items-center ">
                 {" "}
-                {chat.lastMessage}
+                {chat?.lastMessage?.slice(0, 30)}
+                {chat?.lastMessage?.length > 30 && "..."}
                 <span>
                   {chat?.isSeen ? (
                     <IoCheckmarkDoneOutline
@@ -141,11 +210,26 @@ const ChatList = () => {
                       className=" text-[#7879f1] "
                     /> // Seen icon
                   ) : (
-                    <IoCheckmarkOutline size={20} /> // Unseen icon
+                    <IoCheckmarkOutline size={20} className="text-[red]" /> // Unseen icon
                   )}
                 </span>
               </p>
+
+              {chat?.lastMessage?.createdAt && (
+                <span className="text-[12px] text-gray-500">
+                  {format(chat?.lastMessage?.createdAt?.toDate())}
+                </span>
+              )}
             </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent chat selection from triggering
+                handleDelete(chat.chatId, chat.user.id); // Pass receiverId
+              }}
+              className="text-red-500 hover:text-red-700"
+            >
+              <IoTrashBinOutline />
+            </button>
           </div>
         ))}
       </div>

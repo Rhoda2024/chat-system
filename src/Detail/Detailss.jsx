@@ -94,7 +94,7 @@ const Detailss = () => {
 
   return (
     <div className="detail">
-      <div className="py-[30px] px-[10px] flex flex-col items-center gap-[10px] border-b-[white] border-b">
+      <div className="py-[30px] px-[10px] flex flex-col items-center gap-[5px] border-b-[#7879f1] border-b">
         <img
           src={user?.avatar || img}
           alt=""
@@ -136,7 +136,7 @@ const Detailss = () => {
         {view && (
           <button
             onClick={handleBlock}
-            className="p-[10px] border border-[#7879f1] text-white rounded-[5px] cursor-pointer hover:bg-[rgba(220,20,60,0.88)] hover:text-white hover:border-none"
+            className="p-[10px] border border-[#7879f1] text-black rounded-[5px] cursor-pointer hover:bg-[rgba(220,20,60,0.88)] hover:text-white hover:border-none"
           >
             {isCurrentUserBlocked
               ? "You are Blocked"

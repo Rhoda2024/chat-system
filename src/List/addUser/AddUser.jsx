@@ -78,42 +78,41 @@ const AddUser = () => {
   };
 
   return (
-    <div className="">
-      {/* <div className="w-full h-screen absolute "> */}
-      <div className="w-max h-max p-[30px] bg-[rgba(17,25,40,0.781)] rounded-[18px] absolute z-10 top-0 bottom-0 left-0 right-0 m-auto">
-        <form className="flex gap-[20px]" onSubmit={handleSearch}>
-          <input
-            className="p-[20px] rounded-[10px] border-none outline-none  "
-            type="text"
-            placeholder="Username..."
-            name="username"
-          />
-          <button className="p-[20px] rounded-[10px] bg-[#7879f1]">
-            Search
-          </button>
-        </form>
-
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {user && (
-          <div className="mt-[50px] flex items-center justify-between  ">
-            <div className=" flex items-center gap-[20px] ">
-              <img
-                src={user.avatar}
-                alt=""
-                className="w-[50px] h-[50px] rounded-[50%] object-cover "
-              />
-              <span>{user.username}</span>
-            </div>
-            <button
-              className="p-[20px] rounded-[10px] bg-[#7879f1] hover:bg-[#7979da] cursor-pointer border-none "
-              onClick={handleAdd}
-            >
-              Add User
-            </button>
-          </div>
-        )}
+    <div className="max-w-fit h-[300px] p-[30px] bg-white rounded-[18px] absolute top-[16rem] left-[30rem] shadow-2xl ">
+      <div>
+        <p className=" text-[24px] pb-3 ">New Chat</p>
       </div>
-      {/* </div> */}
+      <form className="flex gap-[20px]" onSubmit={handleSearch}>
+        <input
+          className="p-[10px] rounded-[10px] bg-transparent border  border-[#7879f1] outline-none  "
+          type="text"
+          placeholder="Username..."
+          name="username"
+        />
+        <button className="px-[20px] py-[15px] rounded-[10px] bg-[#7879f1] hover:text-white hover:bg-[#4949a8] ">
+          Search
+        </button>
+      </form>
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {user && (
+        <div className="mt-[50px] flex items-center justify-between  ">
+          <div className=" flex items-center gap-[20px] ">
+            <img
+              src={user.avatar}
+              alt=""
+              className="w-[50px] h-[50px] rounded-[50%] object-cover "
+            />
+            <span>{user.username}</span>
+          </div>
+          <button
+            className="px-[10px] py-[15px] rounded-[10px] bg-[#7879f1] hover:text-white hover:bg-[#4949a8] cursor-pointer border-none "
+            onClick={handleAdd}
+          >
+            Add User
+          </button>
+        </div>
+      )}
     </div>
   );
 };

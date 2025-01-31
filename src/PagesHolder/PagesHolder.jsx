@@ -42,7 +42,7 @@ const PagesHolder = () => {
 
   return (
     <div className="">
-      <h1 className=" text-white text-[24px] pb-[0.5rem] flex gap-[5px] items-center">
+      <h1 className=" text-white text-[24px] pl-[2rem] pb-[0.5rem] flex gap-[5px] items-center">
         <IoChatbubbleEllipses size={40} />
         Chatify
       </h1>

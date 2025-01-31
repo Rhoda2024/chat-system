@@ -78,7 +78,7 @@ const AddUser = () => {
   };
 
   return (
-    <div className="max-w-fit h-fit sm-[300px] p-[30px] bg-white rounded-[18px] absolute top-[16rem] left-[0.5rem] de:left-[5rem]  we:left-[30rem] shadow-2xl ">
+    <div className="max-w-fit h-fit sm-[300px] p-[15px] de:p-[25px] bg-white rounded-[18px] absolute top-[25rem] left-[1.6rem] de:left-[5rem]  we:left-[30rem] shadow-2xl ">
       <div>
         <p className=" text-[24px] pb-3 ">New Chat</p>
       </div>

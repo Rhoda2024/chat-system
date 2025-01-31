@@ -181,7 +181,7 @@ const Chats = () => {
             {view && (
               <div
                 ref={detailsRef}
-                className="absolute bg-white text-black shadow-2xl h-[50vh] z-10 w-[80vw] sm:w-[50vw] we:w-[30vw] xl:w-[25vw] top-[3.7rem]  right-[-1.3rem] rounded-[10px]"
+                className="absolute bg-white text-black shadow-2xl h-[60vh] z-10 w-[80vw] sm:w-[50vw] we:w-[30vw] xl:w-[25vw] top-[3.7rem]  right-[-1.3rem] rounded-[10px]"
               >
                 <Detailss />
               </div>
@@ -252,44 +252,6 @@ const Chats = () => {
       </div>
 
       <div className="p-[20px] flex items-center justify-center gap-[10px] sm:gap-[25px] border border-t-[#7879f1] mt-auto ">
-        <MdAttachFile
-          size={25}
-          color="#7879f1"
-          onClick={toggleView1}
-          className="de:hidden p-[5px]"
-        />
-        {view1 && (
-          <div className="absolute bottom-[9rem] de:hidden left-[2rem] shadow-lg bg-white p-[20px] rounded-[1rem] ">
-            <div className="flex items-center gap-[20px]">
-              <label htmlFor="file">
-                <FaCamera
-                  size={25}
-                  color="#7879f1"
-                  className="cursor-pointer"
-                />
-                <input
-                  type="file"
-                  id="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleImg}
-                  className="w-[50px] h-[50px]"
-                />
-              </label>
-              <div className="relative ">
-                <BsEmojiWink
-                  className="w-[25px] h-[25px] cursor-pointer text-[#7879f1]"
-                  alt=""
-                  onClick={() => setOpen((prev) => !prev)}
-                />
-                <div className=" absolute shadow-lg bottom-[3rem] left-[2rem] ">
-                  <EmojiPicker open={open} onEmojiClick={handleEmoji} />
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className=" hidden de:flex gap-[20px]">
           <label htmlFor="file">
             <FaCamera size={25} color="#7879f1" className="cursor-pointer" />
@@ -315,7 +277,7 @@ const Chats = () => {
         </div>
 
         <input
-          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[700px] p-[10px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
+          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[200px] de:w-[700px] p-[6px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
           type="text"
           placeholder={
             isCurrentUserBlocked || isReceiverBlocked
@@ -326,8 +288,21 @@ const Chats = () => {
           onChange={(e) => setText(e.target.value)}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         />
+        <div className="flex items-center gap-[20px] de:hidden ">
+          <label htmlFor="file">
+            <FaCamera size={25} color="#7879f1" className="cursor-pointer" />
+            <input
+              type="file"
+              id="file"
+              accept="image/*"
+              style={{ display: "none" }}
+              onChange={handleImg}
+              className="w-[50px] h-[50px]"
+            />
+          </label>
+        </div>
         <div
-          className=" sm:hidden bg-[#7879f1] hover:bg-[#3e3edd] text-white p-[10px] rounded-full border-[none] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
+          className=" sm:hidden bg-[#7879f1] hover:bg-[#3e3edd] text-white p-[8px] rounded-full border-[none] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
           onClick={handleSend}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         >

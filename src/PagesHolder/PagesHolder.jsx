@@ -42,10 +42,10 @@ const PagesHolder = () => {
 
   return (
     <div className="">
-      <h1 className=" we:hidden text-white text-[24px] justify-center pb-[0.5rem] flex gap-[5px] items-center">
+      {/* <h1 className=" we:hidden text-white text-[24px] justify-center pb-[0.5rem] flex gap-[5px] items-center">
         <IoChatbubbleEllipses size={40} />
         Chatify
-      </h1>
+      </h1> */}
       <div className="flex bg-white text-black w-full we:max-w-fit h-[90vh] rounded-[12px] border border-[#7879f1]">
         {(!chatId || !isMobile) && (
           <div className="flex-grow w-[90vw] we:max-w-fit border-r border-r-[#7879f1]">

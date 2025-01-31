@@ -16,6 +16,8 @@ import { FaCamera, FaCircleInfo } from "react-icons/fa6";
 import { BsEmojiWink } from "react-icons/bs";
 import { format } from "timeago.js";
 import axios from "axios";
+import { IoMdSend } from "react-icons/io";
+import { MdAttachFile } from "react-icons/md";
 
 const Chats = () => {
   const [chat, setChat] = useState();
@@ -26,6 +28,7 @@ const Chats = () => {
     url: "",
   });
   const [view, setView] = useState(false);
+  const [view1, setView1] = useState(false);
   const [tooltip, setTooltip] = useState("");
   const detailsRef = useRef(null);
   const { currentUser } = useUserStore();
@@ -34,6 +37,9 @@ const Chats = () => {
 
   const toggleView = () => {
     setView((prev) => !prev);
+  };
+  const toggleView1 = () => {
+    setView1((prev) => !prev);
   };
 
   // Close detailed view when clicking outside
@@ -148,7 +154,7 @@ const Chats = () => {
   };
 
   return (
-    <div className=" h-full max-w-fit flex flex-col ">
+    <div className=" h-full w-fiy flex flex-col ">
       <div className=" p-[20px] flex items-center justify-between border-b border-b-[#7879f1] ">
         <div className="flex items-center gap-[20px]">
           <img
@@ -175,7 +181,7 @@ const Chats = () => {
             {view && (
               <div
                 ref={detailsRef}
-                className="absolute bg-white text-black shadow-2xl h-[50vh] z-10 w-[20vw] top-[3.7rem]  right-[-1.3rem] rounded-[10px]"
+                className="absolute bg-white text-black shadow-2xl h-[50vh] z-10 w-[80vw] sm:w-[50vw] we:w-[30vw] xl:w-[25vw] top-[3.7rem]  right-[-1.3rem] rounded-[10px]"
               >
                 <Detailss />
               </div>
@@ -236,7 +242,7 @@ const Chats = () => {
 
         {img.url && (
           <div className="">
-            <div className=" w-[400px] h-[400px] ">
+            <div className=" w-[200px] h-[200px] de:w-[400px] de:h-[400px] ">
               <img src={img.url} alt="" />
             </div>
           </div>
@@ -245,8 +251,46 @@ const Chats = () => {
         <div ref={endRef}></div>
       </div>
 
-      <div className="p-[20px] flex items-center justify-center gap-[25px] border border-t-[#7879f1] mt-auto ">
-        <div className="flex items-center gap-[25px]">
+      <div className="p-[20px] flex items-center justify-center gap-[10px] sm:gap-[25px] border border-t-[#7879f1] mt-auto ">
+        <MdAttachFile
+          size={25}
+          color="#7879f1"
+          onClick={toggleView1}
+          className="de:hidden p-[5px]"
+        />
+        {view1 && (
+          <div className="absolute bottom-[9rem] de:hidden left-[2rem] shadow-lg bg-white p-[20px] rounded-[1rem] ">
+            <div className="flex items-center gap-[20px]">
+              <label htmlFor="file">
+                <FaCamera
+                  size={25}
+                  color="#7879f1"
+                  className="cursor-pointer"
+                />
+                <input
+                  type="file"
+                  id="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleImg}
+                  className="w-[50px] h-[50px]"
+                />
+              </label>
+              <div className="relative ">
+                <BsEmojiWink
+                  className="w-[25px] h-[25px] cursor-pointer text-[#7879f1]"
+                  alt=""
+                  onClick={() => setOpen((prev) => !prev)}
+                />
+                <div className=" absolute shadow-lg bottom-[3rem] left-[2rem] ">
+                  <EmojiPicker open={open} onEmojiClick={handleEmoji} />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className=" hidden de:flex gap-[20px]">
           <label htmlFor="file">
             <FaCamera size={25} color="#7879f1" className="cursor-pointer" />
             <input
@@ -264,14 +308,14 @@ const Chats = () => {
               alt=""
               onClick={() => setOpen((prev) => !prev)}
             />
-            <div className=" absolute shadow-lg bottom-[50px] left-[0] ">
+            <div className=" absolute w-[100px] shadow-lg bottom-[3rem] left-0 ">
               <EmojiPicker open={open} onEmojiClick={handleEmoji} />
             </div>
           </div>
         </div>
 
         <input
-          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[700px] p-[15px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
+          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[700px] p-[10px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
           type="text"
           placeholder={
             isCurrentUserBlocked || isReceiverBlocked
@@ -282,9 +326,15 @@ const Chats = () => {
           onChange={(e) => setText(e.target.value)}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         />
-
+        <div
+          className=" sm:hidden bg-[#7879f1] hover:bg-[#3e3edd] text-white p-[10px] rounded-full border-[none] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
+          onClick={handleSend}
+          disabled={isCurrentUserBlocked || isReceiverBlocked}
+        >
+          <IoMdSend />
+        </div>
         <button
-          className=" bg-[#7879f1] hover:bg-[#3e3edd]  text-white px-[30px] py-[10px] border-[none] rounded-[5px] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
+          className=" hidden sm:block bg-[#7879f1] hover:bg-[#3e3edd]  text-white px-[30px] py-[10px] border-[none] rounded-[5px] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
           onClick={handleSend}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         >

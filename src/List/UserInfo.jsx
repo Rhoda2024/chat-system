@@ -78,11 +78,19 @@ const UserInfo = () => {
   return (
     <div className="p-[20px] flex items-center justify-between">
       <div className="flex items-center gap-[20px]">
-        <img
-          src={currentUser.avatar || avatar}
-          alt=""
-          className="w-[50px] h-[50px] rounded-full object-cover"
-        />
+        {currentUser.avatar && currentUser.avatar.startsWith("http") ? (
+          <img
+            src={currentUser.avatar}
+            alt=""
+            className="w-[50px] h-[50px] rounded-full object-cover"
+          />
+        ) : (
+          <div className="w-[50px] h-[50px] flex items-center justify-center bg-[#7879f1] text-white text-xl font-bold rounded-full">
+            {currentUser.username
+              ? currentUser.username.charAt(0).toUpperCase()
+              : "?"}
+          </div>
+        )}
         <h3>{currentUser.username}</h3>
       </div>
 
@@ -123,7 +131,7 @@ const UserInfo = () => {
 
       {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <h2 className="text-lg font-semibold">Are you sure?</h2>
             <p className="text-gray-600">

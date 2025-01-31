@@ -3,7 +3,7 @@ import img from "../assets/avatar.png";
 import { toast, ToastContainer } from "react-toastify";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
-import { doc, getDocs, setDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -11,6 +11,7 @@ const Register = () => {
     file: null,
     url: "",
   });
+  const [username, setUsername] = useState(""); // Store username in state
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -28,7 +29,7 @@ const Register = () => {
     const formData = new FormData();
 
     formData.append("file", file);
-    formData.append("upload_preset", "chatapp"); // Set up an unsigned preset in Cloudinary.
+    formData.append("upload_preset", "chatapp");
 
     try {
       const response = await fetch(cloudinaryUrl, {
@@ -39,7 +40,7 @@ const Register = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error.message);
 
-      return data.secure_url; // Return the uploaded image's URL.
+      return data.secure_url;
     } catch (error) {
       console.error("Cloudinary Upload Error:", error);
       throw error;
@@ -51,22 +52,23 @@ const Register = () => {
     setLoading(true);
 
     const formData = new FormData(e.target);
-    const { username, email, password } = Object.fromEntries(formData);
+    const { email, password } = Object.fromEntries(formData);
 
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
       navigate("/");
 
-      // Upload avatar to Cloudinary
-      const imgUrl = avatar.file
-        ? await uploadToCloudinary(avatar.file)
-        : "DEFAULT_AVATAR_URL"; // Provide a default avatar URL if no file is uploaded.
+      // Upload avatar to Cloudinary if an image is selected
+      const imgUrl = avatar.file ? await uploadToCloudinary(avatar.file) : null;
+
+      // Use first letter of username if no image is uploaded
+      const avatarPlaceholder = username.charAt(0).toUpperCase();
 
       // Add user to Firestore
       await setDoc(doc(db, "users", res.user.uid), {
         username,
         email,
-        avatar: imgUrl,
+        avatar: imgUrl || avatarPlaceholder,
         id: res.user.uid,
         blocked: [],
       });
@@ -92,18 +94,24 @@ const Register = () => {
       </div>
 
       <div className="flex flex-col gap-[10px] items-center">
-        <h2 className=" font-medium text-white text-[35px] sm:text-[50px]">
+        <h2 className="font-medium text-white text-[35px] sm:text-[50px]">
           Create an Account
         </h2>
         <form onSubmit={handleRegister} className="flex flex-col gap-[20px]">
           <label htmlFor="file" className="flex items-center gap-[15px]">
-            <img
-              src={avatar.url || img}
-              alt=""
-              className=" rounded-[1rem] w-[60px] sm:w-[90px]"
-            />
-            <p className="text-[18px] sm:text-[24px] cursor-pointer hover:text-blue-200 ">
-              Upload an image
+            {avatar.url ? (
+              <img
+                src={avatar.url}
+                alt="Profile"
+                className="rounded-[1rem] w-[60px] sm:w-[90px]"
+              />
+            ) : (
+              <div className="w-[60px] sm:w-[90px] h-[60px] sm:h-[90px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-[1rem]">
+                {username ? username.charAt(0).toUpperCase() : "?"}
+              </div>
+            )}
+            <p className="text-[18px] sm:text-[24px] cursor-pointer hover:text-blue-200">
+              Upload a Profile Picture
             </p>
           </label>
           <input
@@ -116,7 +124,9 @@ const Register = () => {
             type="text"
             placeholder="Username..."
             name="username"
-            className=" max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className="max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            value={username} // Bind input to state
+            onChange={(e) => setUsername(e.target.value)} // Update state on change
           />
           <input
             type="email"
@@ -140,8 +150,7 @@ const Register = () => {
         </form>
         <p className="text-blue-950 text-[18px] sm:text-[24px]">
           Already have an account? Login{" "}
-          
-          <Link to="/login" className="underline hover:text-blue-200 ">
+          <Link to="/login" className="underline hover:text-blue-200">
             here
           </Link>
         </p>

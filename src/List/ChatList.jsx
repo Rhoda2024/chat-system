@@ -12,7 +12,6 @@ import {
 import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { GoSearch } from "react-icons/go";
-import { FaTimes } from "react-icons/fa";
 import { TiTimes } from "react-icons/ti";
 import {
   IoCheckmarkDoneOutline,
@@ -139,16 +138,16 @@ const ChatList = () => {
   );
 
   return (
-    <div className=" max-h-[800px] scrollbar-none overflow-y-scroll border-l border-l-[#7879f1]">
-      <p className="text-[24px] pl-[1rem]">Chats</p>
+    <div className=" max-w-[100%] max-h-[800px] scrollbar-none overflow-y-scroll">
+      <p className="text-[25px] pl-[1rem]">Chats</p>
 
-      <div className="flex items-center gap-[10px] p-[20px] ">
-        <div className=" border-[#7879f1] border-2 flex items-center gap-[10px] rounded-[10px] p-[10px] ">
+      <div className="flex items-center justify-between gap-[10px] p-[20px] ">
+        <div className=" border-[#7879f1] w-[230px] de:w-full border-2 flex items-center gap-[10px] rounded-[10px] p-[10px] ">
           <GoSearch color="#7879f1" className="w-[20px] h-[20px]" />
           <input
             type="text"
             className=" border-none outline-none bg-transparent "
-            placeholder="Search or start a new chat..."
+            placeholder="Search for chat..."
             onChange={(e) => setInput(e.target.value)}
           />
         </div>
@@ -201,8 +200,8 @@ const ChatList = () => {
 
               <p className=" text-[14px] font-light  flex justify-between items-center ">
                 {" "}
-                {chat?.lastMessage?.slice(0, 30)}
-                {chat?.lastMessage?.length > 30 && "..."}
+                {chat?.lastMessage?.slice(0, 20)}
+                {chat?.lastMessage?.length > 20 && "..."}
                 <span>
                   {chat?.isSeen ? (
                     <IoCheckmarkDoneOutline

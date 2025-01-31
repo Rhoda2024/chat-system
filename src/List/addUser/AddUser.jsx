@@ -78,13 +78,13 @@ const AddUser = () => {
   };
 
   return (
-    <div className="max-w-fit h-[300px] p-[30px] bg-white rounded-[18px] absolute top-[16rem] left-[30rem] shadow-2xl ">
+    <div className="max-w-fit h-fit sm-[300px] p-[30px] bg-white rounded-[18px] absolute top-[16rem] left-[0.5rem] de:left-[5rem]  we:left-[30rem] shadow-2xl ">
       <div>
         <p className=" text-[24px] pb-3 ">New Chat</p>
       </div>
       <form className="flex gap-[20px]" onSubmit={handleSearch}>
         <input
-          className="p-[10px] rounded-[10px] bg-transparent border  border-[#7879f1] outline-none  "
+          className="p-[10px] rounded-[10px] bg-transparent border w-[150px] sm:w-full  border-[#7879f1] outline-none  "
           type="text"
           placeholder="Username..."
           name="username"

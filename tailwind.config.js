@@ -7,6 +7,10 @@ export default {
         heroimg: "url('../src/assets/bg.jpg')",
         chatimg: "url('../src/assets/imgg.jpg')",
       },
+      screens: {
+        de: "400px",
+        we: "980px",
+      },
     },
   },
   plugins: [require("tailwind-scrollbar")],

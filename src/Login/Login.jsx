@@ -84,14 +84,14 @@ const Login = () => {
             type="email"
             placeholder="Email..."
             name="email"
-            className=" max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className="w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
 
           <input
             type="password"
             placeholder="Password..."
             name="password"
-            className=" outline-none max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] text-black"
+            className=" outline-none w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] text-black"
           />
 
           <button

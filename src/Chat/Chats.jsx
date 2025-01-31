@@ -17,7 +17,7 @@ import { BsEmojiWink } from "react-icons/bs";
 import { format } from "timeago.js";
 import axios from "axios";
 import { IoMdSend } from "react-icons/io";
-import { MdAttachFile } from "react-icons/md";
+import { MdAttachFile, MdOutlineKeyboardBackspace } from "react-icons/md";
 
 const Chats = () => {
   const [chat, setChat] = useState();
@@ -157,6 +157,12 @@ const Chats = () => {
     <div className=" h-full w-fiy flex flex-col ">
       <div className=" p-[20px] flex items-center justify-between border-b border-b-[#7879f1] ">
         <div className="flex items-center gap-[20px]">
+          <button
+            onClick={() => useChatStore.setState({ chatId: null })}
+            className=""
+          >
+            <MdOutlineKeyboardBackspace size={25} className="text-blue-700" />
+          </button>
           <img
             src={user?.avatar || avatar}
             alt=""
@@ -277,7 +283,7 @@ const Chats = () => {
         </div>
 
         <input
-          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[230px] de:w-[700px] p-[6px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
+          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[220px] de:w-[700px] p-[10px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
           type="text"
           placeholder={
             isCurrentUserBlocked || isReceiverBlocked

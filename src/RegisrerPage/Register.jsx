@@ -110,7 +110,7 @@ const Register = () => {
                 {username ? username.charAt(0).toUpperCase() : "?"}
               </div>
             )}
-            <p className="text-[18px] sm:text-[24px] cursor-pointer hover:text-blue-200">
+            <p className="text-[18px] sm:text-[24px] cursor-pointer underline hover:text-blue-200">
               Upload a Profile Picture
             </p>
           </label>
@@ -124,7 +124,7 @@ const Register = () => {
             type="text"
             placeholder="Username..."
             name="username"
-            className="max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className=" w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
             value={username} // Bind input to state
             onChange={(e) => setUsername(e.target.value)} // Update state on change
           />
@@ -132,13 +132,13 @@ const Register = () => {
             type="email"
             placeholder="Email..."
             name="email"
-            className="max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className=" w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
           <input
             type="password"
             placeholder="Password..."
             name="password"
-            className="max-w-full sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className=" w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
 
           <button

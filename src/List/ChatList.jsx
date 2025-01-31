@@ -137,6 +137,8 @@ const ChatList = () => {
     (c) => c.user?.username?.toLowerCase().includes(input.toLowerCase()) // Optional chaining
   );
 
+  console.log("search", filteredChats);
+
   return (
     <div className=" max-w-[100%] max-h-[800px] scrollbar-none overflow-y-scroll">
       <p className="text-[25px] pl-[1rem]">Chats</p>
@@ -182,15 +184,19 @@ const ChatList = () => {
             key={chat.chatId}
             onClick={() => handleSelect(chat)}
           >
-            <img
-              src={
-                chat.user.blocked.includes(currentUser.id)
-                  ? avatar
-                  : chat.user.avatar || avatar
-              }
-              alt=""
-              className=" w-[90px] h-[70px] rounded-[50%] object-cover"
-            />
+            {chat.user.avatar ? (
+              <img
+                src={chat.user.avatar}
+                alt={chat.user.username}
+                className="w-[90px] h-[70px] rounded-[50%] object-cover"
+              />
+            ) : (
+              <div className="w-[90px] h-[70px] flex items-center justify-center rounded-[50%] bg-[#7879f1] text-white text-[30px] font-bold">
+                {chat.user.username
+                  ? chat.user.username.charAt(0).toUpperCase()
+                  : "?"}
+              </div>
+            )}
             <div className="flex flex-col gap-[10px] w-full ">
               <span className="font-medium ">
                 {chat.user.blocked.includes(currentUser.id)

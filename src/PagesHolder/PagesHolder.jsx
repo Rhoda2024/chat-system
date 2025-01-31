@@ -42,7 +42,7 @@ const PagesHolder = () => {
 
   return (
     <div className="">
-      <h1 className=" text-white text-[24px] pl-[2rem] pb-[0.5rem] flex gap-[5px] items-center">
+      <h1 className=" text-white text-[24px] pl-[5rem] pb-[0.5rem] flex gap-[5px] items-center">
         <IoChatbubbleEllipses size={40} />
         Chatify
       </h1>
@@ -58,7 +58,7 @@ const PagesHolder = () => {
             {isMobile && chatId && (
               <button
                 onClick={() => useChatStore.setState({ chatId: null })}
-                className="absolute top-[1.9rem] left-3"
+                className="absolute top-[1.6rem] left-3"
               >
                 <MdOutlineKeyboardBackspace size={25} className="text-white" />
               </button>

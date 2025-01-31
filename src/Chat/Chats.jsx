@@ -212,7 +212,7 @@ const Chats = () => {
                   <img
                     src={message.img}
                     alt="Message"
-                    className="w-[300px] h-[300px] overflow-hidden object-cover rounded-[10px]"
+                    className="w-[200px] h-[200px] de:w-[300px] de:h-[300px] overflow-hidden object-cover rounded-[10px]"
                   />
                 )}
                 {message.text && (
@@ -277,7 +277,7 @@ const Chats = () => {
         </div>
 
         <input
-          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[200px] de:w-[700px] p-[6px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
+          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[230px] de:w-[700px] p-[6px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
           type="text"
           placeholder={
             isCurrentUserBlocked || isReceiverBlocked

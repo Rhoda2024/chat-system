@@ -167,7 +167,7 @@ const Chats = () => {
             <img
               src={user.avatar}
               alt="Profile"
-              className="w-[100px] h-[100px] object-cover rounded-full"
+              className="w-[50px] h-[50px] object-cover rounded-full"
             />
           ) : (
             <div className="w-[100px] h-[100px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-full">
@@ -183,12 +183,12 @@ const Chats = () => {
         <div className="flex gap-[20px]">
           <div className="relative inline-block">
             <FaCircleInfo
-              size={30}
+              size={20}
               color="#7879f1"
               onClick={toggleView}
               onMouseEnter={() => setTooltip("info")}
               onMouseLeave={() => setTooltip("")}
-              className="cursor-pointer"
+              className="cursor-pointer de:w-[25px] de:h-[25px]"
             />
 
             {view && (

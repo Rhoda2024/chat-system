@@ -170,7 +170,7 @@ const Chats = () => {
               className="w-[50px] h-[50px] object-cover rounded-full"
             />
           ) : (
-            <div className="w-[100px] h-[100px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-full">
+            <div className="w-[50px] h-[50px] flex items-center justify-center bg-gray-500 text-white text-[24px] font-bold rounded-full">
               {user?.username ? user.username.charAt(0).toUpperCase() : "?"}
             </div>
           )}

@@ -12,7 +12,6 @@ import {
 import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { GoSearch } from "react-icons/go";
-import { TiTimes } from "react-icons/ti";
 import {
   IoCheckmarkDoneOutline,
   IoCheckmarkOutline,
@@ -133,99 +132,85 @@ const ChatList = () => {
   };
 
   // Fixed search filter (prevents "Cannot read properties of undefined")
-  const filteredChats = chats.filter(
-    (c) => c.user?.username?.toLowerCase().includes(input.toLowerCase()) // Optional chaining
+  const filteredChats = chats.filter((c) =>
+    c.user?.username?.toLowerCase().includes(input.toLowerCase())
   );
 
   console.log("search", filteredChats);
 
   return (
-    <div className=" max-w-[100%] max-h-[800px] scrollbar-none overflow-y-scroll">
+    <div className="max-w-[100%] max-h-[800px] scrollbar-none overflow-y-scroll">
       <p className="text-[25px] pl-[1rem]">Chats</p>
 
-      <div className="flex items-center justify-between gap-[10px] p-[20px] ">
-        <div className=" border-[#7879f1] w-[230px] de:w-full border-2 flex items-center gap-[10px] rounded-[10px] p-[10px] ">
+      <div className="flex items-center justify-between gap-[10px] p-[20px]">
+        <div className="border-[#7879f1] w-[200px] de:w-[85%] we:w-[300px] border-2 flex items-center gap-[10px] rounded-[10px] p-[10px]">
           <GoSearch color="#7879f1" className="w-[20px] h-[20px]" />
           <input
             type="text"
-            className=" border-none outline-none bg-transparent "
+            className="border-none outline-none bg-transparent"
             placeholder="Search for chat..."
             onChange={(e) => setInput(e.target.value)}
           />
         </div>
 
-        <div className="relative inline-block">
-          <div
-            className="w-fit h-fit bg-[#7879f1] cursor-pointer p-[10px] rounded-[10px] flex items-center justify-center"
-            onClick={() => setAddMode((prev) => !prev)}
-            onMouseEnter={() => setTooltip(addMode ? "Close" : "Add User")}
-            onMouseLeave={() => setTooltip("")}
-          >
-            {addMode ? (
-              <TiTimes size={20} className="text-white" />
-            ) : (
-              <CiSearch size={20} className="text-white" />
-            )}
-          </div>
-
-          {/* Tooltip */}
-          {tooltip && (
-            <div className="absolute top-[-26px] left-[70%] text-white rounded-[10px] bg-[#7879f1] p-[5px] text-[10px]">
-              {tooltip}
-            </div>
-          )}
+        <div
+          className="w-fit h-fit bg-[#7879f1] cursor-pointer p-[10px] rounded-[10px] flex items-center justify-center"
+          onClick={() => setAddMode(true)}
+        >
+          <p className="text-white text-[12px]">Add User</p>
         </div>
       </div>
 
       <div>
         {filteredChats.map((chat) => (
           <div
-            className=" flex items-center gap-[20px] p-[20px] cursor-pointer  border-b-[#7879f1] border-b-[1px]"
+            className="flex items-center gap-[20px] p-[20px] cursor-pointer border-b-[#7879f1] border-b-[1px]"
             key={chat.chatId}
             onClick={() => handleSelect(chat)}
           >
-            {chat.user.avatar ? (
+            {chat?.user?.avatar && chat?.user?.avatar.includes("http") ? (
               <img
                 src={chat.user.avatar}
-                alt={chat.user.username}
-                className="w-[90px] h-[70px] rounded-[50%] object-cover"
+                alt="Profile"
+                className="w-[90px] h-[80px] object-cover rounded-[100%]"
               />
             ) : (
-              <div className="w-[90px] h-[70px] flex items-center justify-center rounded-[50%] bg-[#7879f1] text-white text-[30px] font-bold">
-                {chat.user.username
+              <div className="w-[90px] h-[80px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-[100%]">
+                {chat?.user?.username
                   ? chat.user.username.charAt(0).toUpperCase()
                   : "?"}
               </div>
             )}
-            <div className="flex flex-col gap-[10px] w-full ">
-              <span className="font-medium ">
+
+            <div className="flex flex-col gap-[10px] w-full">
+              <span className="font-medium">
                 {chat.user.blocked.includes(currentUser.id)
                   ? "User"
                   : chat.user.username}
               </span>
 
-              <p className=" text-[14px] font-light  flex justify-between items-center ">
-                {" "}
+              <p className="text-[14px] font-light flex justify-between items-center">
                 {chat?.lastMessage?.slice(0, 20)}
                 {chat?.lastMessage?.length > 20 && "..."}
                 <span>
                   {chat?.isSeen ? (
                     <IoCheckmarkDoneOutline
                       size={20}
-                      className=" text-[#7879f1] "
-                    /> // Seen icon
+                      className="text-[#7879f1]"
+                    />
                   ) : (
-                    <IoCheckmarkOutline size={20} className="text-[red]" /> // Unseen icon
+                    <IoCheckmarkOutline size={20} className="text-[red]" />
                   )}
                 </span>
               </p>
 
               {chat?.lastMessage?.createdAt && (
                 <span className="text-[12px] text-gray-500">
-                  {format(chat?.lastMessage?.createdAt?.toDate())}
+                  {format(chat.lastMessage.createdAt.toDate())}
                 </span>
               )}
             </div>
+
             <button
               onClick={(e) => {
                 e.stopPropagation(); // Prevent chat selection from triggering
@@ -239,7 +224,7 @@ const ChatList = () => {
         ))}
       </div>
 
-      {addMode && <AddUser />}
+      {addMode && <AddUser setAddMode={setAddMode} />}
     </div>
   );
 };

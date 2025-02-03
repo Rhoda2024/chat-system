@@ -29,25 +29,12 @@ const Detailss = () => {
     const userDocRef = doc(db, "users", currentUser.id);
 
     try {
-      // Debugging: Log the action
-      console.log(
-        isReceiverBlocked ? "Unblocking user..." : "Blocking user...",
-        user.id
-      );
-
       await updateDoc(userDocRef, {
         blocked: isReceiverBlocked ? arrayRemove(user.id) : arrayUnion(user.id),
-        lastUpdated: new Date(), // Force re-fetch for other user
       });
 
-      // Debugging: Log success
-      console.log(
-        isReceiverBlocked
-          ? "User unblocked successfully."
-          : "User blocked successfully."
-      );
-
-      changeBlock();
+      // Trigger Zustand update to reflect block status in real-time
+      useChatStore.getState().changeChat(chatId, user);
     } catch (error) {
       console.error("Error updating block status:", error);
       toast.error("An error occurred. Please try again.");
@@ -95,11 +82,18 @@ const Detailss = () => {
   return (
     <div className="detail">
       <div className="py-[30px] px-[10px] flex flex-col items-center gap-[5px] border-b-[#7879f1] border-b">
-        <img
-          src={user?.avatar || img}
-          alt=""
-          className="w-[100px] h-[100px] object-cover rounded-[50%]"
-        />
+        {user?.avatar && user?.avatar.includes("http") ? (
+          <img
+            src={user.avatar}
+            alt="Profile"
+            className="w-[100px] h-[100px] object-cover rounded-full"
+          />
+        ) : (
+          <div className="w-[100px] h-[100px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-full">
+            {user?.username ? user.username.charAt(0).toUpperCase() : "?"}
+          </div>
+        )}
+
         <h3 className="text-[24px]">{user?.username}</h3>
         <p className="text-[16px]">{user?.email}</p>
       </div>

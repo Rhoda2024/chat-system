@@ -1,4 +1,4 @@
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { create } from "zustand";
 import { db } from "./firebase";
 import { useUserStore } from "./userStore";
@@ -8,40 +8,58 @@ export const useChatStore = create((set) => ({
   user: null,
   isCurrentUserBlocked: false,
   isReceiverBlocked: false,
-  user: null,
+  unsubscribe: null, // Store Firestore listener reference
 
-  changeChat: (chatId, user) => {
+  changeChat: async (chatId, user) => {
     const currentUser = useUserStore.getState().currentUser;
 
-    // CHECK IF CURRENT USER IS BLOCKED
-    if (user.blocked.includes(currentUser.id)) {
-      return set({
-        chatId,
-        user: null,
-        isCurrentUserBlocked: true,
-        isReceiverBlocked: false,
-      });
-    }
+    try {
+      // Fetch latest block status
+      const userDoc = await getDoc(doc(db, "users", user.id));
+      const currentUserDoc = await getDoc(doc(db, "users", currentUser.id));
 
-    // CHECK IF RECEIVER IS BLOCKED
-    else if (currentUser.blocked.includes(user.id)) {
-      return set({
+      const userData = userDoc.exists() ? userDoc.data() : {};
+      const currentUserData = currentUserDoc.exists()
+        ? currentUserDoc.data()
+        : {};
+
+      const isBlockedByCurrentUser = currentUserData?.blocked?.includes(
+        user.id
+      );
+      const isBlockedByReceiver = userData?.blocked?.includes(currentUser.id);
+
+      // Set the chat state
+      set({
         chatId,
-        user: user,
-        isCurrentUserBlocked: false,
-        isReceiverBlocked: true,
+        user: isBlockedByReceiver ? null : user,
+        isCurrentUserBlocked: isBlockedByReceiver,
+        isReceiverBlocked: isBlockedByCurrentUser,
       });
-    } else {
-      return set({
-        chatId,
-        user,
-        isCurrentUserBlocked: false,
-        isReceiverBlocked: false,
+
+      // Unsubscribe from previous listener if it exists
+      const previousUnsubscribe = useChatStore.getState().unsubscribe;
+      if (previousUnsubscribe) previousUnsubscribe();
+
+      // Real-time updates for block status
+      const unsubscribe = onSnapshot(doc(db, "users", user.id), (docSnap) => {
+        const updatedUserData = docSnap.data();
+        const updatedIsBlockedByReceiver = updatedUserData?.blocked?.includes(
+          currentUser.id
+        );
+
+        set({
+          isCurrentUserBlocked: updatedIsBlockedByReceiver,
+        });
       });
+
+      // Save the new unsubscribe function
+      set({ unsubscribe });
+    } catch (error) {
+      console.error("Error fetching block status:", error);
     }
   },
 
-  changeBlock: () => {
+  changeBlock: async () => {
     set((state) => ({
       ...state,
       isReceiverBlocked: !state.isReceiverBlocked,

@@ -3,7 +3,14 @@ import img from "../assets/avatar.png";
 import { toast, ToastContainer } from "react-toastify";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../lib/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
@@ -55,8 +62,28 @@ const Register = () => {
     const { email, password } = Object.fromEntries(formData);
 
     try {
+      // Check if the username is already in use
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("username", "==", username));
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        toast.error("This username is not available.");
+        setLoading(false);
+        return; // Stop the registration process
+      }
+      if (!email || !password) {
+        toast.error("Email and password are required!");
+        setLoading(false);
+        return;
+      }
+      if (!/\S+@\S+\.\S+/.test(email)) {
+        toast.error("Please enter a valid email address.");
+        setLoading(false);
+        return;
+      }
+
+      // Create user with Firebase Authentication
       const res = await createUserWithEmailAndPassword(auth, email, password);
-      navigate("/");
 
       // Upload avatar to Cloudinary if an image is selected
       const imgUrl = avatar.file ? await uploadToCloudinary(avatar.file) : null;
@@ -79,12 +106,28 @@ const Register = () => {
       });
 
       toast.success("Account created! You can login now");
+      navigate("/");
     } catch (error) {
       console.error("Registration Error:", error);
-      toast.error(error.message);
+      const errorMessage = mapAuthError(error.code);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
+  };
+
+  const mapAuthError = (errorCode) => {
+    const errorMessages = {
+      "auth/invalid-email": "The email address is not valid.",
+      "auth/user-disabled": "This user account has been disabled.",
+      "auth/invalid-credential": "No user found with this email.",
+      "auth/email-already-in-use": "Email is already in use",
+      "auth/invalid-password": "Incorrect password. Please try again.",
+    };
+    return (
+      errorMessages[errorCode] ||
+      "An unexpected error occurred. Please try again."
+    );
   };
 
   return (
@@ -103,10 +146,10 @@ const Register = () => {
               <img
                 src={avatar.url}
                 alt="Profile"
-                className="rounded-[1rem] w-[60px] sm:w-[90px]"
+                className="rounded-full w-[60px] sm:w-[90px]"
               />
             ) : (
-              <div className="w-[60px] sm:w-[90px] h-[60px] sm:h-[90px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-[1rem]">
+              <div className="w-[60px] sm:w-[90px] h-[60px] sm:h-[90px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-full">
                 {username ? username.charAt(0).toUpperCase() : "?"}
               </div>
             )}
@@ -124,7 +167,7 @@ const Register = () => {
             type="text"
             placeholder="Username..."
             name="username"
-            className=" w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className="w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
             value={username} // Bind input to state
             onChange={(e) => setUsername(e.target.value)} // Update state on change
           />
@@ -132,13 +175,13 @@ const Register = () => {
             type="email"
             placeholder="Email..."
             name="email"
-            className=" w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className="w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
           <input
             type="password"
             placeholder="Password..."
             name="password"
-            className=" w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
+            className="w-[300px] de:w-[390px] sm:w-[500px] p-[20px] text-[20px] rounded-[1rem] outline-none text-black"
           />
 
           <button

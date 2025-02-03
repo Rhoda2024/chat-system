@@ -13,12 +13,12 @@ import {
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import { useUserStore } from "../../lib/userStore";
+import { TiTimes } from "react-icons/ti";
 
-const AddUser = () => {
+const AddUser = ({ setAddMode }) => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState("");
   const { currentUser } = useUserStore();
-  const [addMode, setAddMode] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -34,6 +34,9 @@ const AddUser = () => {
       if (!querySnapShot.empty) {
         setUser(querySnapShot.docs[0].data());
         setError("");
+
+        // ✅ CLEAR INPUT AFTER SEARCH
+        e.target.reset();
       } else {
         setError("User does not exist");
       }
@@ -47,6 +50,23 @@ const AddUser = () => {
     const userChatsRef = collection(db, "userchats");
 
     try {
+      const currentUserChatsDoc = await getDoc(
+        doc(userChatsRef, currentUser.id)
+      );
+
+      if (currentUserChatsDoc.exists()) {
+        const currentUserChats = currentUserChatsDoc.data().chats || [];
+
+        const chatExists = currentUserChats.some(
+          (chat) => chat.receiverId === user.id
+        );
+
+        if (chatExists) {
+          setError("Chat already exists with this user.");
+          return;
+        }
+      }
+
       const newChatRef = doc(chatRef);
 
       await setDoc(newChatRef, {
@@ -72,51 +92,61 @@ const AddUser = () => {
         }),
       });
 
-      console.log(newChatRef.id);
+      console.log("New chat created:", newChatRef.id);
+
+      // ✅ CLEAR USER & CLOSE FORM
+      setUser(null); // Hide user details
+      setAddMode(false); // Close modal if using state to toggle visibility
+      setError(""); // Reset error
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    // <div className=" fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="  max-w-fit h-fit sm-[300px] p-[25px] de:p-[25px] bg-white rounded-[18px]  shadow-2xl">
-      <div className="flex justify-between">
-        <p className=" text-[24px] pb-3 ">New Chat</p>
-      </div>
-      <form className="flex gap-[20px]" onSubmit={handleSearch}>
-        <input
-          className="p-[10px] rounded-[10px] bg-transparent border w-[150px] sm:w-full  border-[#7879f1] outline-none  "
-          type="text"
-          placeholder="Username..."
-          name="username"
-        />
-        <button className="px-[20px] py-[15px] rounded-[10px] bg-[#7879f1] hover:text-white hover:bg-[#4949a8] ">
-          Search
-        </button>
-      </form>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {user && (
-        <div className="mt-[50px] flex items-center justify-between  ">
-          <div className=" flex items-center gap-[20px] ">
-            <img
-              src={user.avatar}
-              alt=""
-              className="w-[50px] h-[50px] rounded-[50%] object-cover "
-            />
-            <span>{user.username}</span>
-          </div>
-          <button
-            className="px-[10px] py-[15px] rounded-[10px] bg-[#7879f1] hover:text-white hover:bg-[#4949a8] cursor-pointer border-none "
-            onClick={handleAdd}
-          >
-            Add User
-          </button>
+    <div className=" fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="  max-w-fit h-fit sm-[300px] p-[25px] de:p-[25px] bg-white rounded-[18px]  shadow-2xl">
+        <div className="flex justify-between">
+          <p className=" text-[24px] pb-3 ">New Chat</p>
+          <TiTimes
+            size={30}
+            className="cursor-pointer text-gray-500 hover:text-black"
+            onClick={() => setAddMode(false)}
+          />
         </div>
-      )}
+        <form className="flex gap-[20px]" onSubmit={handleSearch}>
+          <input
+            className="p-[10px] rounded-[10px] bg-transparent border w-[150px] sm:w-full  border-[#7879f1] outline-none  "
+            type="text"
+            placeholder="Username..."
+            name="username"
+          />
+          <button className="px-[20px] py-[15px] rounded-[10px] bg-[#7879f1] hover:text-white hover:bg-[#4949a8] ">
+            Search
+          </button>
+        </form>
+
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {user && (
+          <div className="mt-[50px] flex items-center justify-between  ">
+            <div className=" flex items-center gap-[20px] ">
+              <img
+                src={user.avatar}
+                alt=""
+                className="w-[50px] h-[50px] rounded-[50%] object-cover "
+              />
+              <span>{user.username}</span>
+            </div>
+            <button
+              className="px-[10px] py-[15px] rounded-[10px] bg-[#7879f1] hover:text-white hover:bg-[#4949a8] cursor-pointer border-none "
+              onClick={handleAdd}
+            >
+              Add User
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-    // </div>
   );
 };
 

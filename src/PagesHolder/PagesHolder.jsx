@@ -46,15 +46,15 @@ const PagesHolder = () => {
         <IoChatbubbleEllipses size={40} />
         Chatify
       </h1> */}
-      <div className="flex bg-white text-black w-full we:max-w-fit h-[90vh] rounded-[12px] border border-[#7879f1]">
+      <div className="flex bg-white text-black w-full we:max-w-fit h-[100vh] we:h-[90vh] rounded-[12px] border border-[#7879f1]">
         {(!chatId || !isMobile) && (
-          <div className="flex-grow w-[90vw] we:max-w-fit border-r border-r-[#7879f1]">
+          <div className="flex-grow w-[99.5vw] we:max-w-fit border-r border-r-[#7879f1]">
             <ListPage />
           </div>
         )}
 
         {(chatId || !isMobile) && (
-          <div className="flex-grow w-[90vw] we:w-[60vw]">
+          <div className="flex-grow w-[99.5vw] we:w-[60vw]">
             {isMobile && chatId && (
               <button
                 onClick={() => useChatStore.setState({ chatId: null })}

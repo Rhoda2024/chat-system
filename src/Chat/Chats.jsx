@@ -154,20 +154,27 @@ const Chats = () => {
   };
 
   return (
-    <div className=" h-full w-fiy flex flex-col ">
+    <div className=" h-full w-full flex flex-col ">
       <div className=" p-[20px] flex items-center justify-between border-b border-b-[#7879f1] ">
         <div className="flex items-center gap-[20px]">
           <button
             onClick={() => useChatStore.setState({ chatId: null })}
-            className=""
+            className=" we:hidden "
           >
             <MdOutlineKeyboardBackspace size={25} className="text-blue-700" />
           </button>
-          <img
-            src={user?.avatar || avatar}
-            alt=""
-            className="w-[60px] h-[60px] rounded-[50%] object-cover "
-          />
+          {user?.avatar && user?.avatar.includes("http") ? (
+            <img
+              src={user.avatar}
+              alt="Profile"
+              className="w-[100px] h-[100px] object-cover rounded-full"
+            />
+          ) : (
+            <div className="w-[100px] h-[100px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-full">
+              {user?.username ? user.username.charAt(0).toUpperCase() : "?"}
+            </div>
+          )}
+
           <div className=" flex flex-col gap-[5px] ">
             <span className=" text-[18px] font-bold ">{user?.username}</span>
           </div>
@@ -257,7 +264,7 @@ const Chats = () => {
         <div ref={endRef}></div>
       </div>
 
-      <div className="p-[20px] flex items-center justify-center gap-[10px] sm:gap-[25px] border border-t-[#7879f1] mt-auto ">
+      <div className="p-[20px] flex items-center justify-center gap-[15px] sm:gap-[25px] border border-t-[#7879f1] mt-auto ">
         <div className=" hidden de:flex gap-[20px]">
           <label htmlFor="file">
             <FaCamera size={25} color="#7879f1" className="cursor-pointer" />
@@ -308,11 +315,11 @@ const Chats = () => {
           </label>
         </div>
         <div
-          className=" sm:hidden bg-[#7879f1] hover:bg-[#3e3edd] text-white p-[8px] rounded-full border-[none] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
+          className=" sm:hidden bg-[#7879f1] hover:bg-[#3e3edd] text-white p-[5px] rounded-full border-[none] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "
           onClick={handleSend}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         >
-          <IoMdSend />
+          <IoMdSend size={15} className=" de:size-[25px] " />
         </div>
         <button
           className=" hidden sm:block bg-[#7879f1] hover:bg-[#3e3edd]  text-white px-[30px] py-[10px] border-[none] rounded-[5px] cursor-pointer disabled:cursor-not-allowed  disabled:bg-[rgba(220,20,60,0.88)] "

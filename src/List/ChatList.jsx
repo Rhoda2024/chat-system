@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import avatar from "../assets/avatar.png";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../lib/userStore";
-import {
-  doc,
-  getDoc,
-  onSnapshot,
-  updateDoc,
-  arrayRemove,
-} from "firebase/firestore";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useChatStore } from "../lib/chatStore";
 import { GoSearch } from "react-icons/go";
@@ -17,7 +11,6 @@ import {
   IoCheckmarkOutline,
   IoTrashBinOutline,
 } from "react-icons/io5";
-import { CiSearch } from "react-icons/ci";
 import { format } from "timeago.js";
 import { writeBatch } from "firebase/firestore"; // Import writeBatch
 
@@ -139,7 +132,7 @@ const ChatList = () => {
   console.log("search", filteredChats);
 
   return (
-    <div className="max-w-[100%] max-h-[800px] scrollbar-none overflow-y-scroll">
+    <div className="max-w-[100%] max-h-[800px] scrollbar-none overflow-y-scroll pt-[2rem]">
       <p className="text-[25px] pl-[1rem]">Chats</p>
 
       <div className="flex items-center justify-between gap-[10px] p-[20px]">
@@ -172,10 +165,10 @@ const ChatList = () => {
               <img
                 src={chat.user.avatar}
                 alt="Profile"
-                className="w-[90px] h-[80px] object-cover rounded-[100%]"
+                className="w-[75px] h-[55px] object-cover rounded-[100%]"
               />
             ) : (
-              <div className="w-[90px] h-[80px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-[100%]">
+              <div className="w-[75px] h-[55px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-[100%]">
                 {chat?.user?.username
                   ? chat.user.username.charAt(0).toUpperCase()
                   : "?"}

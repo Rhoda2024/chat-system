@@ -10,7 +10,7 @@ import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { IoChatbubbleEllipses } from "react-icons/io5";
 
 const PagesHolder = () => {
-  const { currentUser, isLoading, fetchUserInfo } = useUserStore();
+  const { currentUser, fetchUserInfo } = useUserStore();
   const { chatId } = useChatStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 980);
 
@@ -32,13 +32,6 @@ const PagesHolder = () => {
   }, [fetchUserInfo]);
 
   console.log(currentUser);
-
-  if (isLoading)
-    return (
-      <div className=" p-[50px] text-[36px] rounded-[10px] bg-[rgba(17,25,40,0.9)] ">
-        Loading...
-      </div>
-    );
 
   return (
     <div className="">

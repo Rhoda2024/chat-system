@@ -76,7 +76,7 @@ const UserInfo = () => {
   };
 
   return (
-    <div className="p-[20px] flex items-center justify-between">
+    <div className="p-[20px] border-b border-b-[#7879f1] we:border-none flex items-center justify-between">
       <div className="flex items-center gap-[20px]">
         {currentUser.avatar && currentUser.avatar.startsWith("http") ? (
           <img

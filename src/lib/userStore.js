@@ -1,12 +1,14 @@
 import { doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
-import { db } from "./firebase";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "./firebase";
 
-export const useUserStore = create((set) => ({
-  currentUser: null,
-  isLoading: true,
-  fetchUserInfo: async (uid) => {
-    if (!uid) return set({ currentUser: null, isLoading: false });
+export const useUserStore = create((set) => {
+  const fetchUserInfo = async (uid) => {
+    if (!uid) {
+      set({ currentUser: null, isLoading: false });
+      return;
+    }
 
     try {
       const docRef = doc(db, "users", uid);
@@ -18,8 +20,24 @@ export const useUserStore = create((set) => ({
         set({ currentUser: null, isLoading: false });
       }
     } catch (error) {
-      console.log(error);
-      if (!uid) return set({ currentUser: null, isLoading: false });
+      console.log("Error fetching user info:", error);
+      set({ currentUser: null, isLoading: false });
     }
-  },
-}));
+  };
+
+  set({ isLoading: true }); // Initially set loading to true
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      fetchUserInfo(user.uid); // Fetch user data from Firestore
+    } else {
+      set({ currentUser: null, isLoading: false });
+    }
+  });
+
+  return {
+    currentUser: null,
+    isLoading: true,
+    fetchUserInfo,
+  };
+});

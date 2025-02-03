@@ -130,11 +130,17 @@ const AddUser = ({ setAddMode }) => {
         {user && (
           <div className="mt-[50px] flex items-center justify-between  ">
             <div className=" flex items-center gap-[20px] ">
-              <img
-                src={user.avatar}
-                alt=""
-                className="w-[50px] h-[50px] rounded-[50%] object-cover "
-              />
+              {user?.avatar && user?.avatar.includes("http") ? (
+                <img
+                  src={user.avatar}
+                  alt="Profile"
+                  className="w-[50px] h-[50px] object-cover rounded-full"
+                />
+              ) : (
+                <div className="w-[50px] h-[50px] flex items-center justify-center bg-gray-500 text-white text-[24px] font-bold rounded-full">
+                  {user?.username ? user.username.charAt(0).toUpperCase() : "?"}
+                </div>
+              )}
               <span>{user.username}</span>
             </div>
             <button

@@ -146,7 +146,7 @@ const Register = () => {
               <img
                 src={avatar.url}
                 alt="Profile"
-                className="rounded-full w-[60px] sm:w-[90px]"
+                className="rounded-full w-[80px] h-[80px] sm:h-[100px] sm:w-[100px]"
               />
             ) : (
               <div className="w-[60px] sm:w-[90px] h-[60px] sm:h-[90px] flex items-center justify-center bg-gray-500 text-white text-3xl font-bold rounded-full">

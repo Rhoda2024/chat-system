@@ -18,6 +18,7 @@ import { format } from "timeago.js";
 import axios from "axios";
 import { IoMdSend } from "react-icons/io";
 import { MdAttachFile, MdOutlineKeyboardBackspace } from "react-icons/md";
+import { TiTimes } from "react-icons/ti";
 
 const Chats = () => {
   const [chat, setChat] = useState();
@@ -84,7 +85,7 @@ const Chats = () => {
     if (e.target.files[0]) {
       setImg({
         file: e.target.files[0],
-        url: URL.createObjectURL(e.target.files[0]),
+        url: URL.createObjectURL(e.target.files[0]), // Temporary preview URL
       });
     }
   };
@@ -95,7 +96,7 @@ const Chats = () => {
     let imgUrl = null;
 
     try {
-      //  Upload image to Cloudinary if it exists
+      // Upload image to Cloudinary if it exists
       if (img.file) {
         const formData = new FormData();
         formData.append("file", img.file);
@@ -120,7 +121,7 @@ const Chats = () => {
         }),
       });
 
-      //  Update user chats
+      // Update user chats
       const userIDs = [currentUser.id, user.id];
 
       userIDs.forEach(async (id) => {
@@ -147,7 +148,7 @@ const Chats = () => {
 
       // Reset input field and image
       setText(""); // Clear text input
-      setImg({ file: null, url: "" }); // Clear image
+      setImg({ file: null, url: "" }); // Clear image preview AFTER sending
     } catch (error) {
       console.error("Error sending message:", error);
     }
@@ -156,7 +157,7 @@ const Chats = () => {
   return (
     <div className=" h-full w-full flex flex-col ">
       <div className=" p-[20px] flex items-center justify-between border-b border-b-[#7879f1] ">
-        <div className="flex items-center gap-[20px]">
+        <div className="flex items-center gap-[15px]">
           <button
             onClick={() => useChatStore.setState({ chatId: null })}
             className=" we:hidden "
@@ -254,10 +255,18 @@ const Chats = () => {
         </div>
 
         {img.url && (
-          <div className="">
-            <div className=" w-[200px] h-[200px] de:w-[400px] de:h-[400px] ">
-              <img src={img.url} alt="" />
-            </div>
+          <div className="relative w-[250px] h-[250px] de:w-[450px] de:h-[450px]">
+            <img
+              src={img.url}
+              alt="Preview"
+              className="rounded-lg object-cover"
+            />
+            <button
+              onClick={() => setImg({ file: null, url: "" })}
+              className="absolute top-2 right-2 bg-black text-white rounded-full p-1"
+            >
+              <TiTimes size={25} />
+            </button>
           </div>
         )}
 

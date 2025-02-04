@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import avatar from "../assets/avatar.png";
 import AddUser from "./addUser/AddUser";
 import { useUserStore } from "../lib/userStore";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
@@ -16,9 +15,8 @@ import { writeBatch } from "firebase/firestore"; // Import writeBatch
 
 const ChatList = () => {
   const [chats, setChats] = useState([]);
-  const [addMode, setAddMode] = useState(false);
+
   const [input, setInput] = useState("");
-  const [tooltip, setTooltip] = useState("");
   const batch = writeBatch(db);
   const { currentUser } = useUserStore();
   const { chatId, changeChat } = useChatStore();
@@ -136,21 +134,14 @@ const ChatList = () => {
       <p className="text-[25px] pl-[1rem]">Chats</p>
 
       <div className="flex items-center justify-between gap-[10px] p-[20px]">
-        <div className="border-[#7879f1] w-[200px] de:w-[85%] we:w-[300px] border-2 flex items-center gap-[10px] rounded-[10px] p-[10px]">
-          <GoSearch color="#7879f1" className="w-[20px] h-[20px]" />
+        <div className="border-[#7879f1] w-[100%] border-2 flex items-center gap-[10px] rounded-[10px] py-[10px] px-[30px]">
+          <GoSearch color="#7879f1" className="w-[25px] h-[25px]" />
           <input
             type="text"
             className="border-none outline-none bg-transparent"
             placeholder="Search for chat..."
             onChange={(e) => setInput(e.target.value)}
           />
-        </div>
-
-        <div
-          className="w-fit h-fit bg-[#7879f1] cursor-pointer p-[10px] rounded-[10px] flex items-center justify-center"
-          onClick={() => setAddMode(true)}
-        >
-          <p className="text-white text-[12px]">Add User</p>
         </div>
       </div>
 
@@ -216,8 +207,6 @@ const ChatList = () => {
           </div>
         ))}
       </div>
-
-      {addMode && <AddUser setAddMode={setAddMode} />}
     </div>
   );
 };

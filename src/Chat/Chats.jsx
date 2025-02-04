@@ -8,7 +8,6 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
-import avatar from "../assets/avatar.png";
 import { useChatStore } from "../lib/chatStore";
 import { useUserStore } from "../lib/userStore";
 import Detailss from "../Detail/Detailss";
@@ -17,7 +16,7 @@ import { BsEmojiWink } from "react-icons/bs";
 import { format } from "timeago.js";
 import axios from "axios";
 import { IoMdSend } from "react-icons/io";
-import { MdAttachFile, MdOutlineKeyboardBackspace } from "react-icons/md";
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { TiTimes } from "react-icons/ti";
 
 const Chats = () => {
@@ -298,9 +297,8 @@ const Chats = () => {
           </div>
         </div>
 
-        <input
-          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[220px] de:w-[700px] p-[10px] rounded-[20px] text-[16px] disabled:cursor-not-allowed "
-          type="text"
+        <textarea
+          className="bg-transparent border border-[#7879f1] outline-[#7879f1] w-[220px] de:w-[700px] py-[10px] px-[20px] rounded-[20px] text-[16px] disabled:cursor-not-allowed scrollbar-none overflow-y-scroll"
           placeholder={
             isCurrentUserBlocked || isReceiverBlocked
               ? "You cannot send a message"
@@ -308,6 +306,12 @@ const Chats = () => {
           }
           value={text}
           onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault(); // Prevents new line when just Enter is pressed
+              handleSend();
+            }
+          }}
           disabled={isCurrentUserBlocked || isReceiverBlocked}
         />
         <div className="flex items-center gap-[20px] de:hidden ">

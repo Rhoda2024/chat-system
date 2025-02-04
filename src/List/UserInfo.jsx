@@ -1,78 +1,16 @@
 import React, { useState } from "react";
-import avatar from "../assets/avatar.png";
 import { useUserStore } from "../lib/userStore";
 import { auth } from "../lib/firebase";
-import { TbLogout } from "react-icons/tb";
-import {
-  doc,
-  deleteDoc,
-  getDocs,
-  collection,
-  query,
-  where,
-  writeBatch,
-} from "firebase/firestore";
-import { getAuth, deleteUser } from "firebase/auth";
-import { db } from "../lib/firebase"; // Your Firebase config
-import { FaTrash } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
+import AddUser from "./addUser/AddUser";
 
 const UserInfo = () => {
-  const [tooltip, setTooltip] = useState("");
-  const [tooltip1, setTooltip1] = useState("");
-  const [showConfirm, setShowConfirm] = useState(false); // State for confirmation modal
   const { currentUser } = useUserStore();
+  const [view, setView] = useState("");
+  const [addMode, setAddMode] = useState(false);
 
-  const handleDeleteAccount = async () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (!user) {
-      console.log("No user is logged in.");
-      return;
-    }
-
-    try {
-      const userChatsRef = doc(db, "userchats", user.uid);
-      const userDocRef = doc(db, "users", user.uid);
-
-      // Find all chats where this user is involved
-      const chatsQuery = query(
-        collection(db, "chats"),
-        where("participants", "array-contains", user.uid)
-      );
-      const chatsSnapshot = await getDocs(chatsQuery);
-
-      // Batch delete operation for Firestore
-      const batch = writeBatch(db);
-
-      // Remove user's personal chat list
-      batch.delete(userChatsRef);
-
-      // Remove user profile
-      batch.delete(userDocRef);
-
-      // Remove this user from all chats they were a part of
-      chatsSnapshot.forEach((chatDoc) => {
-        const chatData = chatDoc.data();
-        const chatRef = doc(db, "chats", chatDoc.id);
-
-        if (chatData.participants.includes(user.uid)) {
-          batch.update(chatRef, {
-            participants: chatData.participants.filter((id) => id !== user.uid),
-          });
-        }
-      });
-
-      // Commit batch deletion
-      await batch.commit();
-
-      // Delete user from Firebase Auth
-      await deleteUser(user);
-
-      console.log("Account deleted successfully.");
-    } catch (error) {
-      console.error("Error deleting account:", error);
-    }
+  const toggleView = () => {
+    setView((prev) => !prev);
   };
 
   return (
@@ -94,66 +32,43 @@ const UserInfo = () => {
         <h3>{currentUser.username}</h3>
       </div>
 
-      <div className="flex items-center gap-[20px]">
-        <div className="relative inline-block">
-          <FaTrash
-            size={20}
-            onClick={() => setShowConfirm(true)} // Show confirmation modal
-            className="text-[#7879f1] cursor-pointer"
-            onMouseEnter={() => setTooltip1("Delete")}
-            onMouseLeave={() => setTooltip1("")}
-          />
-
-          {tooltip1 && (
-            <div className="absolute top-[-30px] left-1/2 transform -translate-x-1/2 bg-[#7879f1] text-white text-sm rounded-md px-2 py-1 z-10">
-              {tooltip1}
-            </div>
-          )}
+      <div className="flex items-center gap-[10px]">
+        <div
+          className="w-fit h-fit bg-[#7879f1] cursor-pointer p-[7px] rounded-[10px] flex items-center justify-center"
+          onClick={() => setAddMode(true)}
+        >
+          <p className="text-white text-[12px]">Add User</p>
         </div>
 
-        <div className="relative inline-block">
-          <TbLogout
+        <div>
+          <IoSettingsOutline
             size={25}
-            color="#7879f1"
-            onClick={() => auth.signOut()}
-            className="cursor-pointer"
-            onMouseEnter={() => setTooltip("Logout")}
-            onMouseLeave={() => setTooltip("")}
+            onClick={toggleView}
+            className=" text-[#7879f1] cursor-pointer hover:text-[#34349b] "
           />
-
-          {tooltip && (
-            <div className="absolute top-[-30px] left-1/2 transform -translate-x-1/2 bg-[#7879f1] text-white text-sm rounded-md px-2 py-1 z-10">
-              {tooltip}
-            </div>
-          )}
         </div>
-      </div>
+        {view && (
+          <div className=" bg-white shadow-2xl p-[20px] h-[50vh] z-10  w-[90%] fe:w-[70%] we:w-[30vw] le:w-[25vw] absolute top-[5.5rem] we:top-[8rem] fe:left-[10rem] we:left-[5.5rem] le:left-[13rem] ">
+            <div>
+              <p className="text-[24px]">Settings</p>
+            </div>
 
-      {/* Confirmation Modal */}
-      {showConfirm && (
-        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-            <h2 className="text-lg font-semibold">Are you sure?</h2>
-            <p className="text-gray-600">
-              Do you really want to delete your account?
-            </p>
-            <div className="flex justify-center gap-4 mt-4">
-              <button
-                onClick={handleDeleteAccount}
-                className="bg-red-500 text-white px-4 py-2 rounded-md"
+            <div className=" flex flex-col gap-[20px] items-center justify-center ">
+              <div
+                size={30}
+                color="#7879f1"
+                onClick={() => auth.signOut()}
+                className="cursor-pointer pt-[5rem]"
               >
-                Yes, Delete
-              </button>
-              <button
-                onClick={() => setShowConfirm(false)}
-                className="bg-gray-300 px-4 py-2 rounded-md"
-              >
-                No, Cancel
-              </button>
+                <button className="border border-[#7879f1] py-[10px] text-white bg-[#7879f1] hover:bg-[#212188] px-[3rem] ">
+                  LogOut
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+        {addMode && <AddUser setAddMode={setAddMode} />}
+      </div>
     </div>
   );
 };
